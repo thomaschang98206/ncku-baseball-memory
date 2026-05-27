@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type ProductOrderModalProps = {
@@ -11,14 +11,10 @@ type ProductOrderModalProps = {
   label: string;
 };
 
-const deliveryOptions = [
-  { value: "pickup", label: "親自找幹部取貨" },
-  { value: "seven", label: "7-11 店到店" },
-  { value: "family", label: "全家店到店" },
-  { value: "post", label: "郵寄" },
-];
-
-const jerseySizes = ["2L", "XL", "L", "M"];
+const ACCOUNT_NAME = "成功大學棒球社王昱峻";
+const BANK_NAME = "中華郵政";
+const BANK_CODE = "700";
+const ACCOUNT_NUMBER = "0031071-0891691";
 
 export default function ProductOrderModal({
   type,
@@ -30,12 +26,11 @@ export default function ProductOrderModal({
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const [quantity, setQuantity] = useState(1);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
+  const [deliveryMethod, setDeliveryMethod] = useState("親自找幹部取貨");
   const [storeInfo, setStoreInfo] = useState("");
   const [note, setNote] = useState("");
 
@@ -43,80 +38,76 @@ export default function ProductOrderModal({
   const [jerseyName, setJerseyName] = useState("");
   const [jerseyNumber, setJerseyNumber] = useState("");
 
-  const totalPrice = useMemo(() => {
-    const safeQuantity = Number.isFinite(quantity) && quantity > 0 ? quantity : 1;
-    return price * safeQuantity;
-  }, [price, quantity]);
+  const totalPrice = price * quantity;
+  const isJersey = type === "jersey";
 
   async function submitOrder() {
-    setErrorMessage("");
-
     if (!customerName.trim()) {
-      setErrorMessage("請填寫姓名。");
+      alert("請填寫姓名");
       return;
     }
 
     if (!customerPhone.trim()) {
-      setErrorMessage("請填寫電話。");
+      alert("請填寫電話");
       return;
     }
 
     if (!quantity || quantity < 1) {
-      setErrorMessage("數量至少要 1。");
+      alert("數量至少為 1");
       return;
     }
 
-    if (type === "jersey") {
-      if (!jerseyName.trim()) {
-        setErrorMessage("請填寫球衣背面英文名字，例如 Y.H YEH。");
-        return;
-      }
-
-      if (!jerseyNumber.trim()) {
-        setErrorMessage("請填寫球衣背號。");
-        return;
-      }
+    if (deliveryMethod === "7-11 店到店" && !storeInfo.trim()) {
+      alert("請填寫 7-11 門市資訊");
+      return;
     }
 
     setSubmitting(true);
 
-    const payload = {
+    const finalNote = [
+      note.trim() ? `備註：${note.trim()}` : "",
+      isJersey ? `球衣尺寸：${jerseySize}` : "",
+      isJersey && jerseyName.trim() ? `球衣姓名：${jerseyName.trim()}` : "",
+      isJersey && jerseyNumber.trim() ? `球衣背號：${jerseyNumber.trim()}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const { error } = await supabase.from("orders").insert({
       product_name: name,
       product_type: type,
-      unit_price: price,
       product_price: price,
+      unit_price: price,
       quantity,
       total_price: totalPrice,
       customer_name: customerName.trim(),
       customer_phone: customerPhone.trim(),
       delivery_method: deliveryMethod,
-      store_info: storeInfo.trim(),
-      note: note.trim(),
+      store_info: deliveryMethod === "7-11 店到店" ? storeInfo.trim() : null,
+      note: finalNote || null,
       payment_status: "pending",
       order_status: "pending",
-      admin_note: "",
-      jersey_size: type === "jersey" ? jerseySize : null,
-      jersey_name: type === "jersey" ? jerseyName.trim().toUpperCase() : null,
-      jersey_number: type === "jersey" ? jerseyNumber.trim() : null,
-    };
+      admin_note: null,
+      jersey_size: isJersey ? jerseySize : null,
+      jersey_name: isJersey ? jerseyName.trim() || null : null,
+      jersey_number: isJersey ? jerseyNumber.trim() || null : null,
+    });
 
-    const { error } = await supabase.from("orders").insert(payload);
+    setSubmitting(false);
 
     if (error) {
       console.error(error);
-      setErrorMessage(`送出失敗：${error.message}`);
-      setSubmitting(false);
+      alert(`訂購送出失敗：${error.message}`);
       return;
     }
 
     setDone(true);
-    setSubmitting(false);
+    alert("訂購資料已送出，請依照帳戶資訊完成轉帳。");
   }
 
-  function closeModal() {
+  function resetAndClose() {
     setOpen(false);
     setDone(false);
-    setErrorMessage("");
   }
 
   return (
@@ -124,198 +115,199 @@ export default function ProductOrderModal({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-6 rounded-full bg-[#A62F2F] px-8 py-4 text-lg font-black text-white shadow-lg transition hover:bg-[#7D2528]"
+        className="group overflow-hidden rounded-[2rem] border border-[#D8C7AE]/70 bg-[#F7F0E6]/90 p-4 text-left text-[#421211] shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
       >
-        我要訂購
+        <div className="aspect-[0.78] overflow-hidden rounded-[1.4rem] bg-white">
+          <img
+            src={image}
+            alt={name}
+            className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
+          />
+        </div>
+
+        <div className="p-4">
+          <p className="text-sm font-black tracking-[0.35em] text-[#A82128]">
+            {label}
+          </p>
+          <h3 className="mt-3 text-3xl font-black">{name}</h3>
+          <p className="mt-3 text-2xl font-black text-[#A82128]">NT${price}</p>
+          <p className="mt-3 text-[#6F6257]">點選填寫訂購表單</p>
+        </div>
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/55 px-4 py-8 backdrop-blur-md">
-          <div className="mx-auto max-w-2xl rounded-[2rem] bg-[#F4EFE6] p-6 text-[#2B0F0F] shadow-2xl md:p-10">
-            <div className="flex justify-end">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-5 backdrop-blur">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-auto rounded-[2rem] bg-[#F7F0E6] p-6 text-[#421211] shadow-2xl md:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-sm font-black tracking-[0.35em] text-[#A82128]">
+                  ORDER FORM
+                </p>
+                <h2 className="mt-6 text-4xl font-black md:text-5xl">{name}</h2>
+                <p className="mt-3 text-3xl font-black text-[#A82128]">
+                  NT${totalPrice}
+                </p>
+              </div>
+
               <button
                 type="button"
-                onClick={closeModal}
-                className="rounded-full bg-[#351211] px-6 py-3 font-black text-white transition hover:bg-[#7D2528]"
+                onClick={resetAndClose}
+                className="rounded-full bg-[#421211] px-6 py-3 font-black text-white"
               >
                 關閉
               </button>
             </div>
 
-            <p className="mt-4 text-sm font-black tracking-[0.45em] text-[#A62F2F]">
-              ORDER FORM
-            </p>
-
-            <div className="mt-4 grid gap-6 md:grid-cols-[160px_1fr] md:items-start">
-              <img
-                src={image}
-                alt={name}
-                className="hidden rounded-3xl border border-[#D8C7AE] bg-white object-contain md:block"
-              />
-
-              <div>
-                <h2 className="text-4xl font-black md:text-5xl">{name}</h2>
-                <p className="mt-3 text-3xl font-black text-[#A62F2F]">
-                  NT${price}
-                </p>
-                <p className="mt-2 text-sm font-semibold text-[#7A665B]">
-                  {label}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-5">
-              <Field label="姓名">
+            <div className="mt-8 grid gap-5">
+              <label className="block">
+                <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                  姓名
+                </span>
                 <input
                   value={customerName}
                   onChange={(event) => setCustomerName(event.target.value)}
                   placeholder="請輸入姓名"
-                  className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                  className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                 />
-              </Field>
+              </label>
 
-              <Field label="電話">
+              <label className="block">
+                <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                  電話
+                </span>
                 <input
                   value={customerPhone}
                   onChange={(event) => setCustomerPhone(event.target.value)}
                   placeholder="請輸入聯絡電話"
-                  className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                  className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                 />
-              </Field>
+              </label>
 
-              <Field label="數量">
+              <label className="block">
+                <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                  數量
+                </span>
                 <input
                   type="number"
                   min={1}
                   value={quantity}
-                  onChange={(event) => setQuantity(Number(event.target.value))}
-                  className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                  onChange={(event) =>
+                    setQuantity(Math.max(1, Number(event.target.value) || 1))
+                  }
+                  className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                 />
-              </Field>
+              </label>
 
-              {type === "jersey" ? (
+              {isJersey ? (
                 <>
-                  <Field label="球衣尺寸">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                      球衣尺寸
+                    </span>
                     <select
                       value={jerseySize}
                       onChange={(event) => setJerseySize(event.target.value)}
-                      className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                      className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                     >
-                      {jerseySizes.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                      <option value="XL">XL</option>
+                      <option value="2L">2L</option>
                     </select>
-                  </Field>
+                  </label>
 
-                  <Field label="球衣背面英文名字">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                      球衣背面英文名字
+                    </span>
                     <input
                       value={jerseyName}
                       onChange={(event) => setJerseyName(event.target.value)}
                       placeholder="例如：Y.H YEH"
-                      className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 uppercase outline-none focus:border-[#A62F2F]"
+                      className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                     />
-                  </Field>
+                  </label>
 
-                  <Field label="球衣背號">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                      背號
+                    </span>
                     <input
                       value={jerseyNumber}
                       onChange={(event) => setJerseyNumber(event.target.value)}
                       placeholder="例如：12"
-                      className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                      className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                     />
-                  </Field>
+                  </label>
                 </>
               ) : null}
 
-              <Field label="取貨方式">
+              <label className="block">
+                <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                  取貨方式
+                </span>
                 <select
                   value={deliveryMethod}
                   onChange={(event) => setDeliveryMethod(event.target.value)}
-                  className="w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                  className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                 >
-                  {deliveryOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
+                  <option value="親自找幹部取貨">親自找幹部取貨</option>
+                  <option value="7-11 店到店">7-11 店到店</option>
                 </select>
-              </Field>
+              </label>
 
-              {deliveryMethod !== "pickup" ? (
-                <Field label="店到店 / 郵寄資訊">
-                  <textarea
+              {deliveryMethod === "7-11 店到店" ? (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                    7-11 門市資訊
+                  </span>
+                  <input
                     value={storeInfo}
                     onChange={(event) => setStoreInfo(event.target.value)}
-                    placeholder="請填寫門市名稱、店號，或郵寄地址。"
-                    className="min-h-24 w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                    placeholder="請填寫門市名稱或地址"
+                    className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                   />
-                </Field>
+                </label>
               ) : null}
 
-              <Field label="備註">
+              <label className="block">
+                <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                  備註
+                </span>
                 <textarea
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
-                  placeholder="可以填寫其他需求。"
-                  className="min-h-24 w-full rounded-2xl border border-[#D8C7AE] bg-white px-5 py-4 outline-none focus:border-[#A62F2F]"
+                  placeholder="可填寫特殊需求或備註"
+                  className="min-h-24 w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
                 />
-              </Field>
+              </label>
             </div>
 
-            <div className="mt-8 rounded-2xl bg-[#EFE3D2] p-5 text-[#7A665B]">
-              <p>送出訂購需求後，請依照帳戶資訊完成轉帳。</p>
-              <p className="mt-2">中華郵政 700｜0031071-0891691</p>
-              <p className="mt-2">戶名：成功大學棒球社王昱峻</p>
-              <p className="mt-2 font-black text-[#2B0F0F]">
-                總金額：NT${totalPrice}
-              </p>
+            <div className="mt-8 rounded-2xl bg-[#F4E8D9] p-5 text-sm leading-7 text-[#6F6257]">
+              送出訂購需求後，請依照帳戶資訊完成轉帳。
+              <br />
+              {BANK_NAME} {BANK_CODE}｜{ACCOUNT_NUMBER}
+              <br />
+              戶名：{ACCOUNT_NAME}
             </div>
-
-            {errorMessage ? (
-              <div className="mt-5 rounded-2xl bg-red-100 p-4 font-bold text-red-700">
-                {errorMessage}
-              </div>
-            ) : null}
 
             <button
               type="button"
               onClick={submitOrder}
-              disabled={submitting}
-              className="mt-8 w-full rounded-full bg-[#A62F2F] px-8 py-5 text-xl font-black text-white transition hover:bg-[#7D2528] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={submitting || done}
+              className="mt-8 w-full rounded-full bg-[#A82128] py-4 font-black text-white transition hover:bg-[#7D2528] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {submitting ? "送出中..." : "確認訂購"}
+              {submitting ? "送出中..." : done ? "已送出訂購資料" : "確認訂購"}
             </button>
 
             {done ? (
-              <div className="mt-5 rounded-2xl bg-[#EFE3D2] p-5">
-                <p className="font-black text-[#2B0F0F]">已送出訂購資料</p>
-                <p className="mt-2 text-sm leading-7 text-[#7A665B]">
-                  請依支持我們區塊的轉帳資訊完成付款，並保留匯款紀錄。
-                </p>
-              </div>
+              <p className="mt-4 rounded-2xl bg-white p-4 text-sm font-bold leading-7 text-[#6F6257]">
+                訂購資料已送出。請依照上方帳戶資訊轉帳，並保留匯款紀錄。
+              </p>
             ) : null}
           </div>
         </div>
       ) : null}
     </>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 block font-black tracking-[0.12em] text-[#A62F2F]">
-        {label}
-      </span>
-      {children}
-    </label>
   );
 }
