@@ -387,7 +387,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
     <Modal onClose={onClose}>
       <div className="max-h-[82vh] overflow-y-auto scroll-smooth rounded-[2rem] bg-[#250B0B] text-white">
         <section className="relative flex min-h-[620px] items-center justify-center overflow-hidden px-8 py-16 text-center">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,238,210,0.28),transparent_36%),linear-gradient(180deg,rgba(119,43,35,0.96),rgba(37,11,11,1))]" />
+          <div className="absolute inset-0 animate-[supportBgIn_1.2s_ease-out_both] bg-[radial-gradient(circle_at_50%_35%,rgba(255,238,210,0.28),transparent_36%),linear-gradient(180deg,rgba(119,43,35,0.96),rgba(37,11,11,1))]" />
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-40" />
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#EFE5D6]/70 to-transparent" />
 
@@ -400,7 +400,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
           </button>
 
           <div className="relative z-10 mx-auto max-w-3xl">
-            <div className="animate-pulse">
+            <div className="animate-[supportLogoIn_1.15s_ease-out_both]">
               <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-white/25 bg-white shadow-[0_20px_70px_rgba(0,0,0,0.38)]">
                 <img
                   src="/images/logo.png"
@@ -418,8 +418,8 @@ function DonateModal({ onClose }: { onClose: () => void }) {
               </p>
             </div>
 
-            <div className="mt-14">
-              <h2 className="text-4xl font-black tracking-[0.08em] text-white md:text-6xl">
+            <div className="animate-[supportTextIn_1.35s_ease-out_0.75s_both]">
+              <h2 className="mt-14 text-4xl font-black tracking-[0.08em] text-white md:text-6xl">
                 {supportText.slogan}
               </h2>
 
@@ -430,7 +430,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
 
             <a
               href="#donation-account-info"
-              className="mx-auto mt-14 flex w-fit animate-bounce flex-col items-center gap-3 rounded-full border border-white/25 bg-white/10 px-7 py-4 text-xs font-black tracking-[0.22em] text-white/80 backdrop-blur transition hover:bg-white/20"
+              className="mx-auto mt-14 flex w-fit animate-[supportHint_1.2s_ease-in-out_1.8s_infinite_alternate] flex-col items-center gap-3 rounded-full border border-white/25 bg-white/10 px-7 py-4 text-xs font-black tracking-[0.22em] text-white/80 backdrop-blur transition hover:bg-white/20"
             >
               往下滑查看捐款資訊
               <span className="text-2xl leading-none">↓</span>
@@ -468,6 +468,58 @@ function DonateModal({ onClose }: { onClose: () => void }) {
             關閉
           </button>
         </section>
+
+        <style>{`
+          @keyframes supportBgIn {
+            0% {
+              opacity: 0;
+              transform: scale(1.04);
+              filter: blur(10px);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+              filter: blur(0);
+            }
+          }
+
+          @keyframes supportLogoIn {
+            0% {
+              opacity: 0;
+              transform: translateY(18px) scale(0.86);
+              filter: blur(14px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+              filter: blur(0);
+            }
+          }
+
+          @keyframes supportTextIn {
+            0% {
+              opacity: 0;
+              transform: translateY(30px);
+              filter: blur(12px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+              filter: blur(0);
+            }
+          }
+
+          @keyframes supportHint {
+            0% {
+              transform: translateY(0);
+              opacity: 0.55;
+            }
+            100% {
+              transform: translateY(8px);
+              opacity: 1;
+            }
+          }
+        `}</style>
       </div>
     </Modal>
   );
