@@ -367,18 +367,16 @@ function DonateModal({ onClose }: { onClose: () => void }) {
           .limit(1)
           .maybeSingle();
 
-        if (error) return;
+        if (error || !data) return;
 
-        if (data) {
-          setSupportText({
-            slogan: data.support_slogan || "YOUR MEMORY, OUR LEGACY",
-            message:
-              data.support_message ||
-              "這不只是一場比賽的紀念，而是把十年裡一起流汗、歡呼、失落與再站起來的片段，留給下一個還相信棒球的人。",
-          });
-        }
+        setSupportText({
+          slogan: data.support_slogan || "YOUR MEMORY, OUR LEGACY",
+          message:
+            data.support_message ||
+            "這不只是一場比賽的紀念，而是把十年裡一起流汗、歡呼、失落與再站起來的片段，留給下一個還相信棒球的人。",
+        });
       } catch {
-        // 如果後台欄位還沒建好，就用預設文字，不讓畫面壞掉
+        // 後台欄位還沒建立時，使用預設文字
       }
     }
 
@@ -387,75 +385,89 @@ function DonateModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="relative min-h-[560px] overflow-hidden rounded-[2rem] bg-[#250B0B] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,238,210,0.26),transparent_36%),linear-gradient(180deg,rgba(119,43,35,0.95),rgba(37,11,11,1))]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-40" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#EFE5D6]/80 to-transparent" />
+      <div className="max-h-[82vh] overflow-y-auto scroll-smooth rounded-[2rem] bg-[#250B0B] text-white">
+        <section className="relative flex min-h-[620px] items-center justify-center overflow-hidden px-8 py-16 text-center">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,238,210,0.28),transparent_36%),linear-gradient(180deg,rgba(119,43,35,0.96),rgba(37,11,11,1))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-40" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#EFE5D6]/70 to-transparent" />
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-7 top-7 z-20 rounded-full bg-[#2B0D0D] px-7 py-4 text-sm font-black tracking-[0.12em] text-white transition hover:bg-[#A82128]"
-        >
-          關閉
-        </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-7 top-7 z-20 rounded-full bg-[#2B0D0D] px-7 py-4 text-sm font-black tracking-[0.12em] text-white transition hover:bg-[#A82128]"
+          >
+            關閉
+          </button>
 
-        <div className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-8 py-16 text-center">
-          <div className="animate-[supportLogoIn_1.1s_ease-out_both]">
-            <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-white/25 bg-white shadow-[0_20px_70px_rgba(0,0,0,0.35)]">
-              <span className="text-5xl font-black text-[#7B1F22]">十</span>
+          <div className="relative z-10 mx-auto max-w-3xl">
+            <div className="animate-pulse">
+              <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-white/25 bg-white shadow-[0_20px_70px_rgba(0,0,0,0.38)]">
+                <img
+                  src="/images/logo.png"
+                  alt="NCKU Baseball Club logo"
+                  className="h-24 w-24 rounded-full object-contain"
+                />
+              </div>
+
+              <p className="mt-7 text-xs font-black tracking-[0.48em] text-white/70">
+                NCKU BASEBALL CLUB
+              </p>
+
+              <p className="mt-2 text-3xl font-black tracking-[0.08em] text-white">
+                PROJECT 10
+              </p>
             </div>
 
-            <p className="mt-7 text-xs font-black tracking-[0.55em] text-white/75">
-              NCKU BASEBALL CLUB
-            </p>
-            <p className="mt-2 text-3xl font-black tracking-tight">
-              PROJECT 10
-            </p>
+            <div className="mt-14">
+              <h2 className="text-4xl font-black tracking-[0.08em] text-white md:text-6xl">
+                {supportText.slogan}
+              </h2>
+
+              <p className="mx-auto mt-8 max-w-2xl text-lg font-bold leading-9 text-white/82 md:text-xl">
+                {supportText.message}
+              </p>
+            </div>
+
+            <a
+              href="#donation-account-info"
+              className="mx-auto mt-14 flex w-fit animate-bounce flex-col items-center gap-3 rounded-full border border-white/25 bg-white/10 px-7 py-4 text-xs font-black tracking-[0.22em] text-white/80 backdrop-blur transition hover:bg-white/20"
+            >
+              往下滑查看捐款資訊
+              <span className="text-2xl leading-none">↓</span>
+            </a>
+          </div>
+        </section>
+
+        <section
+          id="donation-account-info"
+          className="bg-[#EFE5D6] px-7 py-10 text-[#2A0E0C] md:px-12 md:py-14"
+        >
+          <p className="mb-4 text-sm font-black tracking-[0.35em] text-[#A82128]">
+            DONATION INFO
+          </p>
+
+          <h2 className="text-4xl font-black">支持我們</h2>
+
+          <p className="mt-4 leading-8 text-[#6F6257]">
+            目前不串接金流，請依照下方帳戶資訊轉帳。轉帳後請保留匯款資訊。
+          </p>
+
+          <div className="mt-8 space-y-4 rounded-2xl bg-[#F4E8D9] p-6">
+            <Info label="銀行" value={BANK_NAME} />
+            <Info label="銀行代號" value={BANK_CODE} />
+            <Info label="帳號" value={ACCOUNT_NUMBER} />
+            <Info label="戶名" value={ACCOUNT_NAME} />
+            <Info label="分行" value={BRANCH_NAME} />
           </div>
 
-          <div className="mt-12 animate-[supportTextIn_1.4s_ease-out_0.75s_both]">
-            <p className="text-sm font-black tracking-[0.45em] text-[#F0D7C8]/80">
-              SUPPORT
-            </p>
-
-            <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight md:text-6xl">
-              {supportText.slogan}
-            </h2>
-
-            <p className="mx-auto mt-8 max-w-2xl text-base font-bold leading-9 text-white/78 md:text-lg">
-              {supportText.message}
-            </p>
-          </div>
-        </div>
-
-        <style jsx>{`
-          @keyframes supportLogoIn {
-            from {
-              opacity: 0;
-              transform: translateY(18px) scale(0.92);
-              filter: blur(10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0) scale(1);
-              filter: blur(0);
-            }
-          }
-
-          @keyframes supportTextIn {
-            from {
-              opacity: 0;
-              transform: translateY(26px);
-              filter: blur(12px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-              filter: blur(0);
-            }
-          }
-        `}</style>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-8 w-full rounded-full bg-[#A82128] py-4 font-black text-white transition hover:bg-[#7B1F22]"
+          >
+            關閉
+          </button>
+        </section>
       </div>
     </Modal>
   );
