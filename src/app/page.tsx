@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { supabase } from "../lib/supabase";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import PhotoGrid from "../components/PhotoGrid";
@@ -13,6 +14,12 @@ type Product = {
   description: string;
   isJersey?: boolean;
 };
+
+const ACCOUNT_NAME = "成功大學棒球社王昱峻";
+const BANK_NAME = "中華郵政";
+const BANK_CODE = "700";
+const BRANCH_NAME = "成功大學郵局";
+const ACCOUNT_NUMBER = "0031071-0891691";
 
 const products: Product[] = [
   {
@@ -355,11 +362,11 @@ function DonateModal({ onClose }: { onClose: () => void }) {
       </p>
 
       <div className="mt-8 space-y-4 rounded-2xl bg-[#F4E8D9] p-6">
-        <Info label="銀行" value="中華郵政" />
-        <Info label="銀行代號" value="700" />
-        <Info label="帳號" value="0031071-0891691" />
-        <Info label="戶名" value="成功大學棒球社王昱峻" />
-        <Info label="分行" value="成功大學郵局" />
+        <Info label="銀行" value={BANK_NAME} />
+        <Info label="銀行代號" value={BANK_CODE} />
+        <Info label="帳號" value={ACCOUNT_NUMBER} />
+        <Info label="戶名" value={ACCOUNT_NAME} />
+        <Info label="分行" value={BRANCH_NAME} />
       </div>
 
       <button
@@ -376,6 +383,75 @@ function OrderModal({ product, onClose }: { product: Product; onClose: () => voi
   const [quantity, setQuantity] = useState(1);
   const [delivery, setDelivery] = useState("親自找幹部取貨");
 
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [storeInfo, setStoreInfo] = useState("");
+  const [note, setNote] = useState("");
+
+  const [jerseySize, setJerseySize] = useState("L");
+  const [jerseyName, setJerseyName] = useState("");
+  const [jerseyNumber, setJerseyNumber] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const safeQuantity = Math.max(1, Number(quantity) || 1);
+  const totalPrice = product.price * safeQuantity;
+
+  async function submitOrder() {
+    setErrorMessage("");
+
+    if (!customerName.trim()) {
+      setErrorMessage("請填寫姓名。");
+      return;
+    }
+
+    if (!customerPhone.trim()) {
+      setErrorMessage("請填寫電話。");
+      return;
+    }
+
+    if (delivery === "7-11 店到店" && !storeInfo.trim()) {
+      setErrorMessage("請填寫 7-11 收件門市資訊。");
+      return;
+    }
+
+    setSubmitting(true);
+
+    const payload = {
+      product_name: product.name,
+      product_type: product.id,
+      product_price: product.price,
+      unit_price: product.price,
+      quantity: safeQuantity,
+      total_price: totalPrice,
+      customer_name: customerName.trim(),
+      customer_phone: customerPhone.trim(),
+      delivery_method: delivery,
+      store_info: delivery === "7-11 店到店" ? storeInfo.trim() : "",
+      note: note.trim(),
+      payment_status: "unpaid",
+      order_status: "pending",
+      admin_note: "",
+      jersey_size: product.isJersey ? jerseySize : "",
+      jersey_name: product.isJersey ? jerseyName.trim() : "",
+      jersey_number: product.isJersey ? jerseyNumber.trim() : "",
+    };
+
+    const { error } = await supabase.from("orders").insert(payload);
+
+    setSubmitting(false);
+
+    if (error) {
+      console.error("Order insert error:", error);
+      setErrorMessage(`訂單送出失敗：${error.message}`);
+      return;
+    }
+
+    setDone(true);
+  }
+
   return (
     <Modal onClose={onClose}>
       <p className="mb-4 text-sm font-black tracking-[0.35em] text-[#A82128]">
@@ -383,85 +459,175 @@ function OrderModal({ product, onClose }: { product: Product; onClose: () => voi
       </p>
       <h2 className="text-4xl font-black">{product.name}</h2>
       <p className="mt-3 text-2xl font-black text-[#A82128]">
-        NT${product.price * quantity}
+        NT${totalPrice}
       </p>
 
-      <div className="mt-6 grid gap-4">
-        <Field label="姓名" placeholder="請輸入姓名" />
-        <Field label="電話" placeholder="請輸入聯絡電話" />
+      {done ? (
+        <div className="mt-8 rounded-2xl bg-[#F4E8D9] p-6">
+          <p className="text-2xl font-black text-[#341210]">已送出訂購資料</p>
+          <p className="mt-4 leading-7 text-[#6F6257]">
+            請依照下方帳戶完成轉帳，並保留匯款紀錄。
+          </p>
+          <div className="mt-6 space-y-4 rounded-2xl bg-white/60 p-5">
+            <Info label="銀行" value={BANK_NAME} />
+            <Info label="銀行代號" value={BANK_CODE} />
+            <Info label="帳號" value={ACCOUNT_NUMBER} />
+            <Info label="戶名" value={ACCOUNT_NAME} />
+          </div>
+          <button
+            onClick={onClose}
+            className="mt-8 w-full rounded-full bg-[#A82128] py-4 font-black text-white"
+          >
+            完成
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="mt-6 grid gap-4">
+            <Field
+              label="姓名"
+              placeholder="請輸入姓名"
+              value={customerName}
+              onChange={setCustomerName}
+            />
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
-            數量
-          </span>
-          <input
-            type="number"
-            min={1}
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
-          />
-        </label>
+            <Field
+              label="電話"
+              placeholder="請輸入聯絡電話"
+              value={customerPhone}
+              onChange={setCustomerPhone}
+            />
 
-        {product.isJersey && (
-          <>
             <label className="block">
               <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
-                尺寸
+                數量
               </span>
-              <select className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none">
-                <option>2L</option>
-                <option>XL</option>
-                <option>L</option>
-                <option>M</option>
+              <input
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
+              />
+            </label>
+
+            {product.isJersey && (
+              <>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                    尺寸
+                  </span>
+                  <select
+                    value={jerseySize}
+                    onChange={(e) => setJerseySize(e.target.value)}
+                    className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
+                  >
+                    <option value="2L">2L</option>
+                    <option value="XL">XL</option>
+                    <option value="L">L</option>
+                    <option value="M">M</option>
+                  </select>
+                </label>
+
+                <Field
+                  label="球衣背面英文名字"
+                  placeholder="範例：Y.H YEH"
+                  value={jerseyName}
+                  onChange={setJerseyName}
+                />
+
+                <Field
+                  label="背號"
+                  placeholder="範例：12"
+                  value={jerseyNumber}
+                  onChange={setJerseyNumber}
+                />
+              </>
+            )}
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                取貨方式
+              </span>
+              <select
+                value={delivery}
+                onChange={(e) => setDelivery(e.target.value)}
+                className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
+              >
+                <option value="親自找幹部取貨">親自找幹部取貨</option>
+                <option value="7-11 店到店">7-11 店到店</option>
               </select>
             </label>
-            <Field label="球衣背面英文名字" placeholder="範例：Y.H YEH" />
-            <Field label="背號" placeholder="範例：12" />
-          </>
-        )}
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
-            取貨方式
-          </span>
-          <select
-            value={delivery}
-            onChange={(e) => setDelivery(e.target.value)}
-            className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
+            {delivery === "7-11 店到店" && (
+              <Field
+                label="7-11 收件門市資訊"
+                placeholder="請填寫門市名稱或地址"
+                value={storeInfo}
+                onChange={setStoreInfo}
+              />
+            )}
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
+                備註
+              </span>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="有其他需求可以填寫在這裡"
+                className="min-h-24 w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
+              />
+            </label>
+          </div>
+
+          <div className="mt-8 rounded-2xl bg-[#F4E8D9] p-5 text-sm leading-7 text-[#6F6257]">
+            送出訂購需求後，請依照帳戶資訊完成轉帳。
+            <br />
+            {BANK_NAME} {BANK_CODE}｜{ACCOUNT_NUMBER}
+            <br />
+            戶名：{ACCOUNT_NAME}
+          </div>
+
+          {errorMessage ? (
+            <p className="mt-4 rounded-xl bg-red-100 px-4 py-3 text-sm font-bold text-red-700">
+              {errorMessage}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={submitOrder}
+            disabled={submitting}
+            className="mt-6 w-full rounded-full bg-[#A82128] py-4 font-black text-white transition hover:bg-[#8F1F25] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <option>親自找幹部取貨</option>
-            <option>7-11 店到店</option>
-          </select>
-        </label>
-
-        {delivery === "7-11 店到店" && (
-          <Field label="7-11 收件門市資訊" placeholder="請填寫門市名稱或地址" />
-        )}
-      </div>
-
-      <div className="mt-8 rounded-2xl bg-[#F4E8D9] p-5 text-sm leading-7 text-[#6F6257]">
-        送出訂購需求後，請依照帳戶資訊完成轉帳。
-        <br />
-        中華郵政 700｜0031071-0891691
-        <br />
-        戶名：成功大學棒球社王昱峻
-      </div>
-
-      <button className="mt-6 w-full rounded-full bg-[#A82128] py-4 font-black text-white">
-        確認訂購
-      </button>
+            {submitting ? "送出中..." : "確認訂購"}
+          </button>
+        </>
+      )}
     </Modal>
   );
 }
 
-function Field({ label, placeholder }: { label: string; placeholder: string }) {
+function Field({
+  label,
+  placeholder,
+  value,
+  onChange,
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-black tracking-[0.18em] text-[#A82128]">
         {label}
       </span>
       <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full rounded-xl border border-[#D8C7AE] bg-white px-4 py-3 outline-none"
       />
