@@ -1,6 +1,8 @@
 ﻿"use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
+import PhotoGrid from "../components/PhotoGrid";
 
 type Product = {
   id: string;
@@ -40,7 +42,6 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#E8DDCC] text-[#341210]">
       <BackgroundLayer />
-
       <Header />
 
       <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 py-24 md:grid-cols-[1.02fr_0.98fr] md:px-10">
@@ -194,22 +195,22 @@ export default function Home() {
           </p>
         </div>
 
-        <button className="group w-full rounded-[2rem] border border-dashed border-[#D8C7AE]/70 bg-[#F7F0E6]/90 p-10 text-left shadow-xl transition hover:-translate-y-1 hover:shadow-2xl md:p-14">
-          <p className="mb-20 text-sm font-black tracking-[0.35em] text-[#A82128]">
+        <div className="rounded-[2rem] border border-dashed border-[#D8C7AE]/70 bg-[#F7F0E6]/90 p-6 shadow-xl md:p-10">
+          <p className="mb-8 text-sm font-black tracking-[0.35em] text-[#A82128]">
             OB GAME PHOTO DATABASE
           </p>
-          <h3 className="text-4xl font-black md:text-6xl">等待照片上傳</h3>
-          <p className="mt-6 text-lg text-[#6F6257]">
-            後台上傳 OB 賽照片後，此區會自動整理為照片輯並可點選放大查看。
-          </p>
-        </button>
+
+          <PhotoGrid />
+        </div>
       </section>
 
       <section id="goods" className="relative z-10 mx-auto max-w-7xl px-5 py-20 md:px-10">
         <p className="mb-4 text-sm font-black tracking-[0.35em] text-[#A82128]">
           GOODS
         </p>
-        <h2 className="mb-12 text-5xl font-black text-white md:text-7xl">紀念商品</h2>
+        <h2 className="mb-12 text-5xl font-black text-white md:text-7xl">
+          紀念商品
+        </h2>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {products.map((product) => (
@@ -251,9 +252,7 @@ export default function Home() {
       {selectedProduct && (
         <OrderModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
-      {visualOpen && (
-        <VisualModal type={visualOpen} onClose={() => setVisualOpen(null)} />
-      )}
+      {visualOpen && <VisualModal type={visualOpen} onClose={() => setVisualOpen(null)} />}
     </main>
   );
 }
@@ -274,9 +273,15 @@ function Header() {
     <header className="fixed left-0 right-0 top-0 z-30">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10">
         <div className="flex items-center gap-4">
-          <img src="/images/logo.png" alt="NCKU Baseball Club logo" className="h-14 w-14 rounded-full" />
+          <img
+            src="/images/logo.png"
+            alt="NCKU Baseball Club logo"
+            className="h-14 w-14 rounded-full"
+          />
           <div className="text-white">
-            <p className="text-xs font-black tracking-[0.35em]">NCKU BASEBALL CLUB</p>
+            <p className="text-xs font-black tracking-[0.35em]">
+              NCKU BASEBALL CLUB
+            </p>
             <p className="text-2xl font-black">PROJECT 10</p>
           </div>
         </div>
@@ -285,7 +290,7 @@ function Header() {
   );
 }
 
-function Chip({ children }: { children: React.ReactNode }) {
+function Chip({ children }: { children: ReactNode }) {
   return (
     <span className="rounded-full border border-white/25 bg-white/10 px-5 py-2 text-xs font-black tracking-[0.22em] text-[#F4E8D8] backdrop-blur">
       {children}
@@ -296,7 +301,9 @@ function Chip({ children }: { children: React.ReactNode }) {
 function DataBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/15 bg-white/10 p-5 text-white shadow-lg backdrop-blur">
-      <p className="text-xs font-black tracking-[0.25em] text-[#D8C7AE]">{label}</p>
+      <p className="text-xs font-black tracking-[0.25em] text-[#D8C7AE]">
+        {label}
+      </p>
       <p className="mt-3 text-4xl font-black">{value}</p>
     </div>
   );
@@ -326,7 +333,9 @@ function VisualCard({
         />
       </div>
       <div className="p-4">
-        <p className="text-sm font-black tracking-[0.35em] text-[#A82128]">{label}</p>
+        <p className="text-sm font-black tracking-[0.35em] text-[#A82128]">
+          {label}
+        </p>
         <h3 className="mt-3 text-3xl font-black">{title}</h3>
         <p className="mt-3 text-[#6F6257]">點選查看放大圖與章節說明</p>
       </div>
@@ -460,7 +469,13 @@ function Field({ label, placeholder }: { label: string; placeholder: string }) {
   );
 }
 
-function VisualModal({ type, onClose }: { type: "chapter0" | "chapter1"; onClose: () => void }) {
+function VisualModal({
+  type,
+  onClose,
+}: {
+  type: "chapter0" | "chapter1";
+  onClose: () => void;
+}) {
   const data =
     type === "chapter0"
       ? {
@@ -506,7 +521,7 @@ function Modal({
   onClose,
   wide = false,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onClose: () => void;
   wide?: boolean;
 }) {
