@@ -96,8 +96,8 @@ export default function Home() {
           </div>
 
           <div className="mt-10 grid max-w-2xl grid-cols-3 gap-4">
-            <DataBox label="ANNIVERSARY" value="10th" />
-            <DataBox label="GAME DATE" value="05.30" />
+            <DataBox label="ANNI." value="10th" />
+            <DataBox label="GAME DATE" value="5.30" />
             <DataBox label="CHAPTER" value="1+" />
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-8 border-b border-white/15 pb-8">
             <div>
               <p className="text-sm tracking-[0.28em] text-white/50">DATE</p>
-              <p className="mt-3 text-4xl font-black">2026.05.30</p>
+              <p className="mt-3 text-4xl font-black">26.05.30</p>
             </div>
             <div>
               <p className="text-sm tracking-[0.28em] text-white/50">PLACE</p>
