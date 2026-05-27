@@ -361,7 +361,7 @@ const bankInfo = {
   bankName: "中華郵政",
   bankCode: "700",
   accountNumber: "0031071-0891691",
-  accountName: "成功大學棒球社王昱崚",
+  accountName: "成功大學棒球社王昱峻",
 };
 
 export default function ProductOrderModal({

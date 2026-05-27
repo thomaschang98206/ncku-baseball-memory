@@ -358,7 +358,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
         <Info label="銀行" value="中華郵政" />
         <Info label="銀行代號" value="700" />
         <Info label="帳號" value="0031071-0891691" />
-        <Info label="戶名" value="成功大學棒球社王昱崚" />
+        <Info label="戶名" value="成功大學棒球社王昱峻" />
         <Info label="分行" value="成功大學郵局" />
       </div>
 
@@ -445,7 +445,7 @@ function OrderModal({ product, onClose }: { product: Product; onClose: () => voi
         <br />
         中華郵政 700｜0031071-0891691
         <br />
-        戶名：成功大學棒球社王昱崚
+        戶名：成功大學棒球社王昱峻
       </div>
 
       <button className="mt-6 w-full rounded-full bg-[#A82128] py-4 font-black text-white">

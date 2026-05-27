@@ -153,7 +153,7 @@ export default function DonationModal() {
                 <p><span className="font-black text-[#8E1F26]">銀行：</span>中華郵政</p>
                 <p><span className="font-black text-[#8E1F26]">代碼：</span>700</p>
                 <p><span className="font-black text-[#8E1F26]">帳號：</span>0031071-0891691</p>
-                <p><span className="font-black text-[#8E1F26]">戶名：</span>成功大學棒球社王昱崚</p>
+                <p><span className="font-black text-[#8E1F26]">戶名：</span>成功大學棒球社王昱峻</p>
                 <p><span className="font-black text-[#8E1F26]">分行：</span>成功大學郵局</p>
               </div>
 
