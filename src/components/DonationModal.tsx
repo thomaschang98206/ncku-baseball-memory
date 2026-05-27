@@ -8,7 +8,7 @@ type DonationModalProps = {
 };
 
 const donationSettings = {
-  account_name: "成功大學棒球社王昱崚",
+  account_name: "成功大學棒球社王昱峻",
   bank_name: "中華郵政",
   bank_code: "700",
   branch_name: "成功大學郵局",
