@@ -317,7 +317,7 @@ function Header() {
       </p>
 
       <h1 className="mt-2 text-4xl font-black tracking-tight text-white">
-        " PROJECT 10 "
+        "PROJECT 10"
       </h1>
 
       <div className="mt-1 flex items-center gap-3">
