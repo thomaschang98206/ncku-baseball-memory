@@ -316,7 +316,7 @@ function Header() {
         NCKU BASEBALL CLUB
       </p>
 
-      <h1 className="mt-2 text-[30pt] font-black tracking-tight text-white">
+      <h1 className="mt-2 text-[20pt] font-black tracking-tight text-white">
         "PROJECT 10"
       </h1>
 
