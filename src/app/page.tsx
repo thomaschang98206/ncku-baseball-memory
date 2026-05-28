@@ -76,7 +76,7 @@ export default function Home() {
           </p>
 
           <p className="mt-7 max-w-xl text-base leading-8 text-[#F4E8D8]/90 md:text-lg">
-            作為紀念成大乙棒走過的第一個 10 年，PROJECT 10 將成為照片、回憶與支持入口的公開平台。
+            作為紀念成大乙棒走過的第一個 10 年，" PROJECT 10 "將成為照片、回憶與支持入口的公開平台。
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -262,7 +262,7 @@ export default function Home() {
         </p>
 
         <p className="mx-auto mt-6 max-w-3xl text-sm leading-7 text-white/55">
-          我們歡迎各種形式的贊助：貼文標註、LOGO置入、球衣補丁、大專盃征戰球衣名字補丁等，意者請私訊粉專。
+          我們歡迎各種形式的贊助：貼文標註、LOGO置入、球衣補丁、大專盃球衣名字補丁等，意者請私訊粉專。
            <br />
           <a
             href="https://www.instagram.com/ncku_baseballclub/"
@@ -317,7 +317,7 @@ function Header() {
       </p>
 
       <h1 className="mt-2 text-4xl font-black tracking-tight text-white">
-        PROJECT 10
+        " PROJECT 10 "
       </h1>
 
       <div className="mt-1 flex items-center gap-3">
@@ -402,7 +402,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
   const [supportText, setSupportText] = useState({
     slogan: "YOUR MEMORY, OUR LEGACY",
     message:
-      "這不只是一場比賽的紀念，而是把十年裡一起流汗、歡呼、失落與再站起來的片段，留給下一個還相信棒球的人。",
+      "誠摯地邀請您把十年裡一起流汗、歡呼、失落與再站起來的片段，傳遞給下一個還相信棒球的人。",
   });
 
   useEffect(() => {
@@ -421,7 +421,7 @@ function DonateModal({ onClose }: { onClose: () => void }) {
           slogan: data.support_slogan || "YOUR MEMORY, OUR LEGACY",
           message:
             data.support_message ||
-            "這不只是一場比賽的紀念，而是把十年裡一起流汗、歡呼、失落與再站起來的片段，留給下一個還相信棒球的人。",
+            "誠摯地邀請您把十年裡一起流汗、歡呼、失落與再站起來的片段，留給下一個還相信棒球的人。",
         });
       } catch {
         // 後台欄位還沒建立時，使用預設文字
