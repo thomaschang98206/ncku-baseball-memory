@@ -347,7 +347,7 @@ function Header() {
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full border border-white/25 bg-white/10 px-5 py-2 text-xs font-black tracking-[0.22em] text-[#F4E8D8] backdrop-blur">
+    <span className="rounded-full border border-white/25 bg-white/10 px-5 py-2 text-[5pt] font-black tracking-[0.22em] text-[#F4E8D8] backdrop-blur">
       {children}
     </span>
   );
