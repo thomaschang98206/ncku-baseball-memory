@@ -51,7 +51,7 @@ export default function Home() {
       <BackgroundLayer />
       <Header />
 
-      <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 py-24 md:grid-cols-[1.02fr_0.98fr] md:px-10">
+      <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-3 px-5 py-24 md:grid-cols-[1.02fr_0.98fr] md:px-10">
         <div>
           <div className="mb-2 flex flex-wrap gap-6">
             <Chip>STATUS: ONLINE</Chip>
@@ -347,7 +347,7 @@ function Header() {
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full border border-white/25 bg-white/10 px-5 py-2 text-[5pt] font-black tracking-[0.22em] text-[#F4E8D8] backdrop-blur">
+    <span className="rounded-full border border-white/25 bg-white/10 px-5 py-2 text-[3pt] font-black tracking-[0.22em] text-[#F4E8D8] backdrop-blur">
       {children}
     </span>
   );
