@@ -26,7 +26,7 @@ const products: Product[] = [
     id: "towel",
     code: "PRODUCT 01",
     name: "PROJECT 10 毛巾",
-    price: 450,
+    price: 150,
     image: "/images/towel.png",
     description: "十週年紀念毛巾，延續主視覺的紅、米、灰色系。",
   },
@@ -247,7 +247,33 @@ export default function Home() {
           ))}
         </div>
       </section>
+ <footer className="relative z-10 border-t border-white/10 bg-[#160606]/70 px-6 py-10 text-center text-white/65 backdrop-blur-md">
+        <p className="text-xs font-black tracking-[0.24em]">
+          " Project 10 " is powered by 
+          {" "}
+          <a
+            href="https://www.instagram.com/ncku_baseballclub/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 decoration-white/50 transition hover:text-white hover:decoration-white"
+          >
+            © NCKU Baseball Club
+          </a>
+        </p>
 
+        <p className="mx-auto mt-6 max-w-3xl text-sm leading-7 text-white/55">
+          我們歡迎各種形式的贊助：貼文標註、LOGO置入、球衣補丁、大專盃征戰球衣名字補丁等，意者請私訊粉專。
+           <br />
+          <a
+            href="https://www.instagram.com/ncku_baseballclub/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-1 underline underline-offset-4 decoration-white/50 transition hover:text-white hover:decoration-white"
+          >
+            國立成功大學一般組棒球隊IG粉專
+          </a>
+        </p>
+      </footer>
       <button
         onClick={() => setDonateOpen(true)}
         className="fixed bottom-6 right-6 z-40 rounded-full bg-[#A82128] px-8 py-4 text-base font-black tracking-[0.1em] text-white shadow-2xl transition hover:scale-[1.04] md:bottom-8 md:right-8"
@@ -472,7 +498,9 @@ function DonateModal({ onClose }: { onClose: () => void }) {
 
           <p className="mt-4 leading-8 text-[#6F6257]">
             我們由衷感謝每一位願意捐款支持我們的前輩∕夥伴。  
-            為表示謝意，將致贈一頂十周年紀念帽予捐贈1000元以上的捐贈者
+            為表示謝意，將致贈一頂十周年紀念帽予捐贈1000元以上的捐贈者。
+             <br />
+            我們也歡迎各種形式的贊助；意者請私訊主頁IG粉專，見主頁底部連結。
           </p>
 
           <div className="mt-8 space-y-4 rounded-2xl bg-[#F4E8D9] p-6">
