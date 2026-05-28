@@ -277,23 +277,45 @@ function BackgroundLayer() {
 
 function Header() {
   return (
-    <header className="fixed left-0 right-0 top-0 z-30">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10">
-        <div className="flex items-center gap-4">
-          <img
-            src="/images/logo.png"
-            alt="NCKU Baseball Club logo"
-            className="h-14 w-14 rounded-full"
-          />
-          <div className="text-white">
-            <p className="text-xs font-black tracking-[0.35em]">
-              NCKU BASEBALL CLUB
-            </p>
-            <p className="text-2xl font-black">PROJECT 10</p>
-          </div>
-        </div>
+   <header className="fixed left-0 top-0 z-40 w-full border-b border-white/10 bg-[#5B241E]/15 backdrop-blur-xl">
+  <div className="mx-auto flex max-w-[1500px] items-center gap-5 px-8 py-2">
+    <img
+      src="/images/logo.png"
+      alt="NCKU Baseball Club"
+      className="h-16 w-16 shrink-0 rounded-full object-contain"
+    />
+
+    <div className="leading-none">
+      <p className="text-sm font-black tracking-[0.35em] text-white/75">
+        NCKU BASEBALL CLUB
+      </p>
+
+      <h1 className="mt-2 text-4xl font-black tracking-tight text-white">
+        PROJECT 10
+      </h1>
+
+      <div className="mt-1 flex items-center gap-3">
+   <p className="text-[10px] font-bold tracking-[0.22em] text-white/75">
+  Sponsored by{" "}
+  <a
+    href="https://www.facebook.com/sandlotbaseballtw/?locale=zh_TW"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline underline-offset-4 decoration-white/60 decoration-1 transition hover:text-white hover:decoration-white"
+  >
+    Sandlot Baseball
+  </a>
+</p>
+
+        <img
+          src="/images/sandlot-logo.png"
+          alt="Sandlot Baseball"
+          className="h-7 w-auto object-contain"
+        />
       </div>
-    </header>
+    </div>
+  </div>
+</header>
   );
 }
 
@@ -449,7 +471,8 @@ function DonateModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-4xl font-black">支持我們</h2>
 
           <p className="mt-4 leading-8 text-[#6F6257]">
-            目前不串接金流，請依照下方帳戶資訊轉帳。轉帳後請保留匯款資訊。
+            我們由衷感謝每一位願意捐款支持我們的前輩∕夥伴。  
+            為表示謝意，將致贈一頂十周年紀念帽予捐贈1000元以上的捐贈者
           </p>
 
           <div className="mt-8 space-y-4 rounded-2xl bg-[#F4E8D9] p-6">
