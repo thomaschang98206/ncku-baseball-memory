@@ -53,7 +53,7 @@ export default function Home() {
 
       <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 py-24 md:grid-cols-[1.02fr_0.98fr] md:px-10">
         <div>
-          <div className="mb-8 flex flex-wrap gap-3">
+          <div className="mb-2 flex flex-wrap gap-6">
             <Chip>STATUS: ONLINE</Chip>
             <Chip>ARCHIVE MODE</Chip>
             <Chip>2016 - 2026+</Chip>
