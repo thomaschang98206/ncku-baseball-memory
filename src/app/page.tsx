@@ -312,11 +312,11 @@ function Header() {
     />
 
     <div className="leading-none">
-      <p className="text-sm font-black tracking-[0.35em] text-white/75">
+      <p className="text-[8pt] font-black tracking-[0.35em] text-white/75">
         NCKU BASEBALL CLUB
       </p>
 
-      <h1 className="mt-2 text-4xl font-black tracking-tight text-white">
+      <h1 className="mt-2 text-[30pt] font-black tracking-tight text-white">
         "PROJECT 10"
       </h1>
 
